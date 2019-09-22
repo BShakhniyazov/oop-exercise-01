@@ -7,7 +7,7 @@
 реализованы операции:
  сложения add, (a, b) + (c, d) = (ad + bc, bd);
  вычитания sub, (a, b) – (c, d) = (ad – bc, bd);
- умножения mul, (a, b)  (c, d) = (ac, bd);
+ умножения mul, (a, b) * (c, d) = (ac, bd);
  деления div, (a, b) / (c, d) = (ad, bc);
  операции сравнения.
 Должна быть реализована функция сокращения дроби reduce(), которая обязательно вызывается при
@@ -51,8 +51,14 @@ public:
 
     Rational operator/(Rational b)
     {
-        Rational c(this->numerator * b.denominator, this->denominator * b.numerator);
-        return c;
+        if(b.numerator)
+        {
+            Rational c(this->numerator * b.denominator, this->denominator * b.numerator);
+            return c;
+        } else{
+            std::cout << "Деление на ноль.\n";
+            return Rational(0,1);
+        }
     }
 
     int operator==(Rational b)
@@ -83,7 +89,14 @@ public:
     void set(int _numerator, int _denominator)
     {
         numerator = _numerator;
-        denominator = _denominator;
+        if( _denominator)
+            denominator = _denominator;
+        else
+        {
+            std::cout << "Введённый знаменатель равен нулю.\n";
+            numerator = 0; 
+            denominator = 1;
+        }
     }
 
     int EuclideanAlgorithm(int a, int b) //алгоритм Евклида (поиск наибольшего общего кратного)
@@ -95,9 +108,11 @@ public:
 
     void reduce() //сокращение дроби
     {
+        if(denominator == 1) return;
         int NOK = EuclideanAlgorithm(numerator, denominator);
-        while(NOK != 1)
+        while(true)
         {
+            if(NOK == 1) break; //если общих делителей больше нет
             numerator /= NOK;
             denominator /= NOK;
             NOK = EuclideanAlgorithm(numerator, denominator);
@@ -129,6 +144,8 @@ void cout_menu()
 
 int main()
 {
+    std::cout << "Программа для работы с рациональными числами.\n" <<
+                 "Числа a и b вводит пользователь, число c - результат применения оператора над a и b." << std::endl;
     Rational a, b, c;
     int action=1, num, den;
     while(action != 0)
